@@ -1,0 +1,378 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXORA | Premium Image Gallery</title>
+
+<style>
+:root {
+  --bg: #070A13;
+  --surface: #0D1322;
+  --white: #F4F7FF;
+  --muted: #A4AEC4;
+  --purple: #9A7BFF;
+  --blue: #648BFF;
+  --cyan: #67DFF5;
+  --gold: #D6B779;
+  --border: rgba(177,194,255,.14);
+  --gradient: linear-gradient(115deg,#B49AFF,#718DFF 52%,#67DFF5);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  padding: 55px 7%;
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: var(--white);
+  background:
+    radial-gradient(ellipse at 12% 8%,rgba(112,83,220,.15),transparent 38%),
+    radial-gradient(ellipse at 90% 75%,rgba(57,126,194,.12),transparent 35%),
+    var(--bg);
+}
+
+.header {
+  max-width: 1200px;
+  margin: 0 auto 45px;
+  text-align: center;
+}
+
+.logo {
+  display: inline-block;
+  margin-bottom: 22px;
+  color: var(--cyan);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 5px;
+}
+
+.header h1 {
+  font-size: clamp(34px,5vw,60px);
+  letter-spacing: -2px;
+  line-height: 1.15;
+  margin-bottom: 18px;
+}
+
+.header h1 span {
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.header p {
+  max-width: 600px;
+  margin: auto;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.gallery {
+  max-width: 1200px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 24px;
+}
+
+.image-card {
+  height: 370px;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: var(--surface);
+  cursor: pointer;
+  transition: transform .45s ease,
+              border-color .45s ease,
+              box-shadow .45s ease;
+  animation: appear .7s both;
+}
+
+.image-card:nth-child(2) { animation-delay: .12s; }
+.image-card:nth-child(3) { animation-delay: .24s; }
+
+.image-card:hover {
+  transform: translateY(-9px);
+  border-color: rgba(154,123,255,.65);
+  box-shadow: 0 24px 55px rgba(0,0,0,.35),
+              0 0 28px rgba(112,141,255,.10);
+}
+
+.image-card img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform .8s cubic-bezier(.2,.7,.2,1),
+              filter .6s ease;
+}
+
+.image-card:hover img {
+  transform: scale(1.12);
+  filter: saturate(1.18);
+}
+
+.image-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgba(5,8,18,.98) 0%,
+    rgba(8,13,27,.76) 32%,
+    rgba(10,15,30,.12) 75%,
+    transparent 100%
+  );
+}
+
+.image-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .5s ease;
+  background: linear-gradient(
+    135deg,
+    rgba(154,123,255,.22),
+    transparent 45%,
+    rgba(103,223,245,.14)
+  );
+}
+
+.image-card:hover::before {
+  opacity: 1;
+}
+
+.card-content {
+  position: absolute;
+  z-index: 3;
+  left: 25px;
+  right: 25px;
+  bottom: 25px;
+  transform: translateY(12px);
+  transition: transform .45s ease;
+}
+
+.image-card:hover .card-content {
+  transform: translateY(0);
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 8px 12px;
+  border: 1px solid rgba(214,183,121,.32);
+  border-radius: 30px;
+  background: rgba(15,21,39,.82);
+  backdrop-filter: blur(14px);
+  color: #F5E5B8;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.tag::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 9px rgba(214,183,121,.55);
+}
+
+.card-content h2 {
+  margin-bottom: 9px;
+  font-size: 25px;
+  letter-spacing: -.5px;
+}
+
+.card-content p {
+  max-width: 290px;
+  color: #B1BCD2;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(177,194,255,.16);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all .4s ease;
+}
+
+.image-card:hover .card-footer {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.card-footer span {
+  color: #CBD4EA;
+  font-size: 12px;
+}
+
+.arrow {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(214,183,121,.38);
+  border-radius: 50%;
+  color: #F5E5B8;
+  font-size: 18px;
+  transition: all .35s ease;
+}
+
+.image-card:hover .arrow {
+  color: #10111A;
+  background: linear-gradient(135deg,#D6B779,#F5E5B8,#B38B49);
+  border-color: transparent;
+  transform: rotate(-45deg);
+}
+
+.bottom-note {
+  max-width: 1200px;
+  margin: 30px auto 0;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(13,19,34,.78);
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+  text-align: center;
+}
+
+.image-card:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 5px;
+}
+
+@keyframes appear {
+  from { opacity: 0; transform: translateY(25px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 900px) {
+  body { padding: 40px 5%; }
+  .gallery { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .image-card { height: 340px; }
+}
+
+@media (max-width: 600px) {
+  body { padding: 32px 18px; }
+  .header h1 { letter-spacing: -1px; }
+  .gallery { grid-template-columns: 1fr; gap: 18px; }
+  .image-card { height: 350px; }
+  .card-content { transform: none; }
+  .card-footer { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+  <div class="logo">N E X O R A</div>
+  <h1>Explore Our <span>Digital World</span></h1>
+  <p>Discover premium digital experiences through elegant design,
+  advanced technology and creative innovation.</p>
+</header>
+
+<main class="gallery">
+
+  <article class="image-card" tabindex="0">
+    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1000&q=85"
+         alt="Advanced electronic technology">
+    <div class="card-content">
+      <span class="tag">Innovation</span>
+      <h2>Future Technology</h2>
+      <p>Discover intelligent solutions designed for the next generation.</p>
+      <div class="card-footer">
+        <span>Technology / 01</span>
+        <span class="arrow">↗</span>
+      </div>
+    </div>
+  </article>
+
+  <article class="image-card" tabindex="0">
+    <img src="https://images.unsplash.com/photo-1481487196290-c152efe083f5?auto=format&fit=crop&w=1000&q=85"
+         alt="Modern creative workspace">
+    <div class="card-content">
+      <span class="tag">Creativity</span>
+      <h2>Digital Experience</h2>
+      <p>Transform ambitious ideas into beautiful digital products.</p>
+      <div class="card-footer">
+        <span>Creative / 02</span>
+        <span class="arrow">↗</span>
+      </div>
+    </div>
+  </article>
+
+  <article class="image-card" tabindex="0">
+    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1000&q=85"
+         alt="Planet Earth viewed from space">
+    <div class="card-content">
+      <span class="tag">Next Generation</span>
+      <h2>Global Intelligence</h2>
+      <p>Connect people, ideas and technology through smart design.</p>
+      <div class="card-footer">
+        <span>Innovation / 03</span>
+        <span class="arrow">↗</span>
+      </div>
+    </div>
+  </article>
+
+</main>
+
+<footer class="bottom-note">
+  Premium Design &nbsp; • &nbsp; Smooth Animations &nbsp; •
+  &nbsp; Luxury Colors &nbsp; • &nbsp; Responsive Layout
+</footer>
+
+<script>
+const cards = document.querySelectorAll(".image-card");
+
+cards.forEach((card) => {
+  card.addEventListener("mousemove", (event) => {
+    if (window.matchMedia("(hover: none)").matches) return;
+
+    const rect = card.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width;
+    const y = (event.clientY - rect.top) / rect.height;
+
+    card.style.setProperty("--pointer-x", `${x * 100}%`);
+    card.style.setProperty("--pointer-y", `${y * 100}%`);
+  });
+});
+</script>
+
+</body>
+</html>
